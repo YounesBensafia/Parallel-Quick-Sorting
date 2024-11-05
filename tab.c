@@ -3,6 +3,8 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include <time.h>
+#include <stdbool.h>
+
 
 void perm(int *a, int *b) {
     int temp = *a;
@@ -17,18 +19,49 @@ void afficherTab(int T[], int n) {
     printf("\n");
 }
 
-void remplirTab(int T[], int n) {
-    for (int i = 0; i < n; i++) {
-        T[i] = (rand() % 100);
-    }
+bool exist(int x,int T[],int n){
+for (int i = 0; i < n; i++)
+if(x==T[i])return true;
+return false;
+
 }
 
-int Indice_pv(int T[], int debut, int fin, int pv) {
-    for (int k = debut; k <= fin; k++) {
-        if (T[k] == pv) {
-            return k;
-        }
+void remplirTab(int T[], int n) {
+    int x;
+    srand(time(NULL));
+    for (int i = 0; i < n; i++) {
+        do
+        x=rand() % (n+1);
+        while(exist(x,T,n));
+        T[i] = x;
     }
+    
+}
+
+int* generate(int n) {
+    int* table = (int*)malloc(n * sizeof(int)); 
+    int x;
+    if (table == NULL) { 
+        printf("Memory allocation failed.\n");
+        return NULL;
+    }
+    
+    srand(time(NULL));
+    for (int i = 0; i < n; i++) {
+        
+        do{
+        x=rand() % (n+1);
+        //printf("%d",x);
+        x=x+rand() % (n+1);
+        printf(" %d",x);
+        }
+        while(exist(x,table,n));
+         
+        printf(" put %d \n",x);
+        table[i] = x;
+    }
+
+    return table;
 }
 
 int parti(int T[], int debut, int fin) {
@@ -37,26 +70,14 @@ int parti(int T[], int debut, int fin) {
     int i = debut; 
     int j = fin;  
     while (i < j) {
-        while (T[i] < pv && i < j) i++;
-        while (T[j] > pv && i < j) j--;    
+        while (T[i] < pv ) i++;
+        while (T[j] > pv ) j--;    
         if (i < j){
             perm(&T[i], &T[j]);
-            // i++;
-            // j--;
         }
     }
-    ip = Indice_pv(T, debut, fin, pv);
-
-    if (ip > i) {
-        perm(&T[ip], &T[i]);
-        return i;
-    }
-
-    if (ip < i) {
-        perm(&T[ip], &T[i - 1]);
-        return i - 1;
-    }
-    return ip; 
+    
+    return i; 
 }
 
 void quickSort(int T[], int debut, int fin) {
@@ -88,20 +109,21 @@ void quickSort(int T[], int debut, int fin) {
 }
 
 int main() {
-    int T[100];
-    int n;
-    printf("Entrez la taille du tableau: ");
-    scanf("%d", &n);
+    int n=10;
+    int* T=generate(n);
+    
+    //printf("Entrez la taille du tableau: ");
+    //scanf("%d", &n);
 
-    srand(time(NULL));
-
-    remplirTab(T, n);
+    
+for (int i ;i<2;i++){
+    T=generate(n);
    
     printf("Avant:\n");
     afficherTab(T, n);
 
     quickSort(T, 0, n - 1);
-
+}
 
     // parti(T, 0, n-1);
     // printf("\nAprès:\n");
